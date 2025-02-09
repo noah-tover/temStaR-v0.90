@@ -755,9 +755,18 @@ change_ntsparam2stdntsparam <-function(ntsparam){
 #' q <- ipnts(u, ntsparam)
 #' plot(x,q,type = 'l')
 #'
-ipnts <-function( u, ntsparam, maxmin = c(-10,10), du = 0.01){
-  newparam = change_ntsparam2stdntsparam( ntsparam )
-  x = invcdf_FFT_GilPelaez(u,newparam$stdparam, functional::Curry(chf_stdNTS), maxmin, du,
+ipnts <-function( u, ntsparam, maxmin = c(-10,10), du = 0.01, std = FALSE){
+  if(std == FALSE){
+    newparam = change_ntsparam2stdntsparam( ntsparam )
+    stdparam = newparam$stdparam
+    sig <- newparam$sig
+    mu <- newparam$mu
+  } else {
+    stdparam = ntsparam
+    sig <- 1
+    mu <- 0
+  }
+  x = invcdf_FFT_GilPelaez(u,stdparam, functional::Curry(chf_stdNTS), maxmin, du,
                            dz = 2^-8, m = 2^12)
   y = x*newparam$sig+newparam$mu
   names(y) <- u
